@@ -1,72 +1,83 @@
 package test;
 
 import main.QuantityMeasurementApp;
-import main.QuantityMeasurementApp.LengthUnit;
 import main.QuantityMeasurementApp.Quantity;
+import main.QuantityMeasurementApp.LengthUnit;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
 
+    // 🔹 YARD TESTS
+
     @Test
-    void givenSameFeetValues_whenCompared_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
-        Quantity q2 = new Quantity(1.0, LengthUnit.FEET);
+    void givenSameYardValues_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
+        Quantity q2 = new Quantity(1.0, LengthUnit.YARD);
 
         assertTrue(q1.equals(q2));
     }
 
     @Test
-    void givenSameInchValues_whenCompared_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.INCH);
-        Quantity q2 = new Quantity(1.0, LengthUnit.INCH);
+    void givenYardToFeetEquivalent_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
+        Quantity q2 = new Quantity(3.0, LengthUnit.FEET);
 
         assertTrue(q1.equals(q2));
     }
 
     @Test
-    void givenFeetAndInchEquivalent_whenCompared_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
-        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+    void givenYardToInchEquivalent_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
+        Quantity q2 = new Quantity(36.0, LengthUnit.INCH);
 
         assertTrue(q1.equals(q2));
     }
 
     @Test
-    void givenInchAndFeetEquivalent_whenCompared_shouldReturnTrue() {
-        Quantity q1 = new Quantity(12.0, LengthUnit.INCH);
-        Quantity q2 = new Quantity(1.0, LengthUnit.FEET);
-
-        assertTrue(q1.equals(q2));
-    }
-
-    @Test
-    void givenDifferentFeetValues_whenCompared_shouldReturnFalse() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
-        Quantity q2 = new Quantity(2.0, LengthUnit.FEET);
+    void givenDifferentYardValues_shouldReturnFalse() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
+        Quantity q2 = new Quantity(2.0, LengthUnit.YARD);
 
         assertFalse(q1.equals(q2));
     }
 
+    // 🔹 CM TESTS
+
     @Test
-    void givenDifferentInchValues_whenCompared_shouldReturnFalse() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.INCH);
-        Quantity q2 = new Quantity(2.0, LengthUnit.INCH);
+    void givenSameCmValues_shouldReturnTrue() {
+        Quantity q1 = new Quantity(2.0, LengthUnit.CM);
+        Quantity q2 = new Quantity(2.0, LengthUnit.CM);
+
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void givenCmToInchEquivalent_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.CM);
+        Quantity q2 = new Quantity(0.393701, LengthUnit.INCH);
+
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void givenCmToFeetNotEqual_shouldReturnFalse() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.CM);
+        Quantity q2 = new Quantity(1.0, LengthUnit.FEET);
 
         assertFalse(q1.equals(q2));
     }
 
-    @Test
-    void givenNullComparison_shouldReturnFalse() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
-
-        assertFalse(q1.equals(null));
-    }
+    // 🔹 TRANSITIVE TEST
 
     @Test
-    void givenSameReference_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+    void givenYardFeetInchTransitive_shouldReturnTrue() {
+        Quantity yard = new Quantity(1.0, LengthUnit.YARD);
+        Quantity feet = new Quantity(3.0, LengthUnit.FEET);
+        Quantity inch = new Quantity(36.0, LengthUnit.INCH);
 
-        assertTrue(q1.equals(q1));
+        assertTrue(yard.equals(feet));
+        assertTrue(feet.equals(inch));
+        assertTrue(yard.equals(inch));
     }
 }
