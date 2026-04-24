@@ -1,86 +1,72 @@
 package test;
 
 import main.QuantityMeasurementApp;
+import main.QuantityMeasurementApp.LengthUnit;
+import main.QuantityMeasurementApp.Quantity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
 
-    // 🔹 FEET TESTS
-
     @Test
     void givenSameFeetValues_whenCompared_shouldReturnTrue() {
-        QuantityMeasurementApp.Feet f1 = new QuantityMeasurementApp.Feet(1.0);
-        QuantityMeasurementApp.Feet f2 = new QuantityMeasurementApp.Feet(1.0);
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(1.0, LengthUnit.FEET);
 
-        assertTrue(f1.equals(f2));
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void givenSameInchValues_whenCompared_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.INCH);
+        Quantity q2 = new Quantity(1.0, LengthUnit.INCH);
+
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void givenFeetAndInchEquivalent_whenCompared_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void givenInchAndFeetEquivalent_whenCompared_shouldReturnTrue() {
+        Quantity q1 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity q2 = new Quantity(1.0, LengthUnit.FEET);
+
+        assertTrue(q1.equals(q2));
     }
 
     @Test
     void givenDifferentFeetValues_whenCompared_shouldReturnFalse() {
-        QuantityMeasurementApp.Feet f1 = new QuantityMeasurementApp.Feet(1.0);
-        QuantityMeasurementApp.Feet f2 = new QuantityMeasurementApp.Feet(2.0);
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(2.0, LengthUnit.FEET);
 
-        assertFalse(f1.equals(f2));
-    }
-
-    @Test
-    void givenFeetValue_whenComparedWithNull_shouldReturnFalse() {
-        QuantityMeasurementApp.Feet f1 = new QuantityMeasurementApp.Feet(1.0);
-
-        assertFalse(f1.equals(null));
-    }
-
-    @Test
-    void givenSameFeetReference_whenCompared_shouldReturnTrue() {
-        QuantityMeasurementApp.Feet f1 = new QuantityMeasurementApp.Feet(1.0);
-
-        assertTrue(f1.equals(f1));
-    }
-
-    @Test
-    void givenFeetValue_whenComparedWithDifferentType_shouldReturnFalse() {
-        QuantityMeasurementApp.Feet f1 = new QuantityMeasurementApp.Feet(1.0);
-
-        assertFalse(f1.equals("1.0"));
-    }
-
-    // 🔥 INCH TESTS
-
-    @Test
-    void givenSameInchValues_whenCompared_shouldReturnTrue() {
-        QuantityMeasurementApp.Inch i1 = new QuantityMeasurementApp.Inch(1.0);
-        QuantityMeasurementApp.Inch i2 = new QuantityMeasurementApp.Inch(1.0);
-
-        assertTrue(i1.equals(i2));
+        assertFalse(q1.equals(q2));
     }
 
     @Test
     void givenDifferentInchValues_whenCompared_shouldReturnFalse() {
-        QuantityMeasurementApp.Inch i1 = new QuantityMeasurementApp.Inch(1.0);
-        QuantityMeasurementApp.Inch i2 = new QuantityMeasurementApp.Inch(2.0);
+        Quantity q1 = new Quantity(1.0, LengthUnit.INCH);
+        Quantity q2 = new Quantity(2.0, LengthUnit.INCH);
 
-        assertFalse(i1.equals(i2));
+        assertFalse(q1.equals(q2));
     }
 
     @Test
-    void givenInchValue_whenComparedWithNull_shouldReturnFalse() {
-        QuantityMeasurementApp.Inch i1 = new QuantityMeasurementApp.Inch(1.0);
+    void givenNullComparison_shouldReturnFalse() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
 
-        assertFalse(i1.equals(null));
+        assertFalse(q1.equals(null));
     }
 
     @Test
-    void givenSameInchReference_whenCompared_shouldReturnTrue() {
-        QuantityMeasurementApp.Inch i1 = new QuantityMeasurementApp.Inch(1.0);
+    void givenSameReference_shouldReturnTrue() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
 
-        assertTrue(i1.equals(i1));
-    }
-
-    @Test
-    void givenInchValue_whenComparedWithDifferentType_shouldReturnFalse() {
-        QuantityMeasurementApp.Inch i1 = new QuantityMeasurementApp.Inch(1.0);
-
-        assertFalse(i1.equals("1.0"));
+        assertTrue(q1.equals(q1));
     }
 }
