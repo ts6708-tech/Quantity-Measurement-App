@@ -2,7 +2,7 @@ package main;
 
 public class QuantityMeasurementApp {
 
-    // 🔹 ENUM for units
+    // 🔹 ENUM
     public enum LengthUnit {
         FEET(1.0),
         INCH(1.0 / 12.0),
@@ -20,18 +20,15 @@ public class QuantityMeasurementApp {
         }
     }
 
-    // 🔹 Quantity Class
+    // 🔹 QUANTITY CLASS
     public static class Quantity {
         private final double value;
         private final LengthUnit unit;
 
         public Quantity(double value, LengthUnit unit) {
-            if (unit == null) {
-                throw new IllegalArgumentException("Unit cannot be null");
-            }
-            if (!Double.isFinite(value)) {
-                throw new IllegalArgumentException("Invalid value");
-            }
+            if (unit == null) throw new IllegalArgumentException("Unit cannot be null");
+            if (!Double.isFinite(value)) throw new IllegalArgumentException("Invalid value");
+
             this.value = value;
             this.unit = unit;
         }
@@ -44,7 +41,7 @@ public class QuantityMeasurementApp {
             return unit;
         }
 
-        // 🔹 Equality (UC3+)
+        // 🔹 EQUALS
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -52,38 +49,42 @@ public class QuantityMeasurementApp {
 
             Quantity other = (Quantity) obj;
 
-            double thisVal = this.unit.toBase(this.value);
-            double otherVal = other.unit.toBase(other.value);
+            double v1 = this.unit.toBase(this.value);
+            double v2 = other.unit.toBase(other.value);
 
-            return Double.compare(thisVal, otherVal) == 0;
+            return Double.compare(v1, v2) == 0;
         }
 
-        // 🔹 ADDITION (UC6)
+        // 🔹 UC6 ADD
         public static Quantity add(Quantity q1, Quantity q2) {
-
             if (q1 == null || q2 == null) {
-                throw new IllegalArgumentException("Quantity cannot be null");
+                throw new IllegalArgumentException("Null quantity");
             }
 
-            double base1 = q1.unit.toBase(q1.value);
-            double base2 = q2.unit.toBase(q2.value);
+            double base = q1.unit.toBase(q1.value) + q2.unit.toBase(q2.value);
+            double result = base / q1.unit.toBase(1.0);
 
-            double sumBase = base1 + base2;
+            return new Quantity(result, q1.unit);
+        }
 
-            // result in unit of first operand
-            double resultValue = sumBase / q1.unit.toBase(1.0);
+        // 🔥 UC7 ADD WITH TARGET
+        public static Quantity add(Quantity q1, Quantity q2, LengthUnit targetUnit) {
+            if (q1 == null || q2 == null || targetUnit == null) {
+                throw new IllegalArgumentException("Invalid input");
+            }
 
-            return new Quantity(resultValue, q1.unit);
+            double base = q1.unit.toBase(q1.value) + q2.unit.toBase(q2.value);
+            double result = base / targetUnit.toBase(1.0);
+
+            return new Quantity(result, targetUnit);
         }
     }
 
-    // 🔹 CONVERSION (UC5)
+    // 🔹 UC5 CONVERT
     public static double convert(double value, LengthUnit source, LengthUnit target) {
-
         if (source == null || target == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
-
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Invalid value");
         }
@@ -92,14 +93,24 @@ public class QuantityMeasurementApp {
         return base / target.toBase(1.0);
     }
 
-    // 🔹 MAIN METHOD (optional demo)
+    // 🔥 MAIN METHOD (IMPORTANT FOR INTELLIJ)
     public static void main(String[] args) {
+
+        System.out.println("=== Quantity Measurement App Demo ===");
 
         Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
         Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
 
-        Quantity result = Quantity.add(q1, q2);
+        // UC6
+        Quantity result1 = Quantity.add(q1, q2);
+        System.out.println("UC6 Result (Feet): " + result1.getValue() + " " + result1.getUnit());
 
-        System.out.println("Result: " + result.getValue() + " " + result.getUnit());
+        // UC7
+        Quantity result2 = Quantity.add(q1, q2, LengthUnit.YARD);
+        System.out.println("UC7 Result (Yard): " + result2.getValue() + " " + result2.getUnit());
+
+        // UC5
+        double converted = convert(1.0, LengthUnit.FEET, LengthUnit.INCH);
+        System.out.println("Convert 1 ft to inch: " + converted);
     }
 }
