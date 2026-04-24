@@ -1,83 +1,88 @@
 package test;
 
 import main.QuantityMeasurementApp;
-import main.QuantityMeasurementApp.Quantity;
 import main.QuantityMeasurementApp.LengthUnit;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
 
-    // 🔹 YARD TESTS
+    private static final double EPS = 1e-6;
 
     @Test
-    void givenSameYardValues_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
-        Quantity q2 = new Quantity(1.0, LengthUnit.YARD);
-
-        assertTrue(q1.equals(q2));
+    void testFeetToInches() {
+        assertEquals(12.0,
+                QuantityMeasurementApp.convert(1.0, LengthUnit.FEET, LengthUnit.INCH),
+                EPS);
     }
 
     @Test
-    void givenYardToFeetEquivalent_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
-        Quantity q2 = new Quantity(3.0, LengthUnit.FEET);
-
-        assertTrue(q1.equals(q2));
+    void testInchesToFeet() {
+        assertEquals(2.0,
+                QuantityMeasurementApp.convert(24.0, LengthUnit.INCH, LengthUnit.FEET),
+                EPS);
     }
 
     @Test
-    void givenYardToInchEquivalent_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
-        Quantity q2 = new Quantity(36.0, LengthUnit.INCH);
-
-        assertTrue(q1.equals(q2));
+    void testYardsToInches() {
+        assertEquals(36.0,
+                QuantityMeasurementApp.convert(1.0, LengthUnit.YARD, LengthUnit.INCH),
+                EPS);
     }
 
     @Test
-    void givenDifferentYardValues_shouldReturnFalse() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.YARD);
-        Quantity q2 = new Quantity(2.0, LengthUnit.YARD);
-
-        assertFalse(q1.equals(q2));
-    }
-
-    // 🔹 CM TESTS
-
-    @Test
-    void givenSameCmValues_shouldReturnTrue() {
-        Quantity q1 = new Quantity(2.0, LengthUnit.CM);
-        Quantity q2 = new Quantity(2.0, LengthUnit.CM);
-
-        assertTrue(q1.equals(q2));
+    void testInchesToYards() {
+        assertEquals(2.0,
+                QuantityMeasurementApp.convert(72.0, LengthUnit.INCH, LengthUnit.YARD),
+                EPS);
     }
 
     @Test
-    void givenCmToInchEquivalent_shouldReturnTrue() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.CM);
-        Quantity q2 = new Quantity(0.393701, LengthUnit.INCH);
-
-        assertTrue(q1.equals(q2));
+    void testCentimeterToInch() {
+        assertEquals(1.0,
+                QuantityMeasurementApp.convert(2.54, LengthUnit.CM, LengthUnit.INCH),
+                EPS);
     }
 
     @Test
-    void givenCmToFeetNotEqual_shouldReturnFalse() {
-        Quantity q1 = new Quantity(1.0, LengthUnit.CM);
-        Quantity q2 = new Quantity(1.0, LengthUnit.FEET);
-
-        assertFalse(q1.equals(q2));
+    void testFeetToYard() {
+        assertEquals(2.0,
+                QuantityMeasurementApp.convert(6.0, LengthUnit.FEET, LengthUnit.YARD),
+                EPS);
     }
 
-    // 🔹 TRANSITIVE TEST
+    @Test
+    void testZeroConversion() {
+        assertEquals(0.0,
+                QuantityMeasurementApp.convert(0.0, LengthUnit.FEET, LengthUnit.INCH),
+                EPS);
+    }
 
     @Test
-    void givenYardFeetInchTransitive_shouldReturnTrue() {
-        Quantity yard = new Quantity(1.0, LengthUnit.YARD);
-        Quantity feet = new Quantity(3.0, LengthUnit.FEET);
-        Quantity inch = new Quantity(36.0, LengthUnit.INCH);
+    void testNegativeConversion() {
+        assertEquals(-12.0,
+                QuantityMeasurementApp.convert(-1.0, LengthUnit.FEET, LengthUnit.INCH),
+                EPS);
+    }
 
-        assertTrue(yard.equals(feet));
-        assertTrue(feet.equals(inch));
-        assertTrue(yard.equals(inch));
+    @Test
+    void testRoundTrip() {
+        double value = 5.0;
+        double converted = QuantityMeasurementApp.convert(value, LengthUnit.FEET, LengthUnit.INCH);
+        double back = QuantityMeasurementApp.convert(converted, LengthUnit.INCH, LengthUnit.FEET);
+
+        assertEquals(value, back, EPS);
+    }
+
+    @Test
+    void testInvalidUnitThrows() {
+        assertThrows(IllegalArgumentException.class, () ->
+                QuantityMeasurementApp.convert(1.0, null, LengthUnit.FEET));
+    }
+
+    @Test
+    void testNaNThrows() {
+        assertThrows(IllegalArgumentException.class, () ->
+                QuantityMeasurementApp.convert(Double.NaN, LengthUnit.FEET, LengthUnit.INCH));
     }
 }
