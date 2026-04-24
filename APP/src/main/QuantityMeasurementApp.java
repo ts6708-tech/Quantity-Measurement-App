@@ -2,6 +2,7 @@ package main;
 
 public class QuantityMeasurementApp {
 
+    // 🔹 ENUM for units
     public enum LengthUnit {
         FEET(1.0),
         INCH(1.0 / 12.0),
@@ -19,20 +20,35 @@ public class QuantityMeasurementApp {
         }
     }
 
+    // 🔹 Quantity Class
     public static class Quantity {
         private final double value;
         private final LengthUnit unit;
 
         public Quantity(double value, LengthUnit unit) {
+            if (unit == null) {
+                throw new IllegalArgumentException("Unit cannot be null");
+            }
+            if (!Double.isFinite(value)) {
+                throw new IllegalArgumentException("Invalid value");
+            }
             this.value = value;
             this.unit = unit;
         }
 
+        public double getValue() {
+            return value;
+        }
+
+        public LengthUnit getUnit() {
+            return unit;
+        }
+
+        // 🔹 Equality (UC3+)
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
-            if (obj == null) return false;
-            if (this.getClass() != obj.getClass()) return false;
+            if (obj == null || this.getClass() != obj.getClass()) return false;
 
             Quantity other = (Quantity) obj;
 
@@ -41,24 +57,49 @@ public class QuantityMeasurementApp {
 
             return Double.compare(thisVal, otherVal) == 0;
         }
+
+        // 🔹 ADDITION (UC6)
+        public static Quantity add(Quantity q1, Quantity q2) {
+
+            if (q1 == null || q2 == null) {
+                throw new IllegalArgumentException("Quantity cannot be null");
+            }
+
+            double base1 = q1.unit.toBase(q1.value);
+            double base2 = q2.unit.toBase(q2.value);
+
+            double sumBase = base1 + base2;
+
+            // result in unit of first operand
+            double resultValue = sumBase / q1.unit.toBase(1.0);
+
+            return new Quantity(resultValue, q1.unit);
+        }
     }
 
-    // 🔥 NEW METHOD (UC5 CORE)
+    // 🔹 CONVERSION (UC5)
     public static double convert(double value, LengthUnit source, LengthUnit target) {
 
-        // Validation
         if (source == null || target == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
 
         if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Invalid numeric value");
+            throw new IllegalArgumentException("Invalid value");
         }
 
-        // Convert to base (feet)
         double base = source.toBase(value);
-
-        // Convert base → target
         return base / target.toBase(1.0);
+    }
+
+    // 🔹 MAIN METHOD (optional demo)
+    public static void main(String[] args) {
+
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        Quantity result = Quantity.add(q1, q2);
+
+        System.out.println("Result: " + result.getValue() + " " + result.getUnit());
     }
 }
