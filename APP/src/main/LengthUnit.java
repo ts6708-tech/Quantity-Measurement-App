@@ -1,25 +1,27 @@
 package main;
 
-public enum LengthUnit {
+public enum LengthUnit implements IMeasurable {
 
-    FEET(1.0),
-    INCHES(1.0 / 12.0),
-    YARDS(3.0),
-    CENTIMETERS(1.0 / 30.48);
+    METER(1.0),
+    CENTIMETERS(0.01),
+    KILOMETER(1000.0),
+    FEET(0.3048),
+    INCHES(0.0254),
+    YARDS(0.9144);
 
-    private final double toFeetFactor;
+    private final double conversionFactor;
 
-    LengthUnit(double toFeetFactor) {
-        this.toFeetFactor = toFeetFactor;
+    LengthUnit(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
 
-    // 🔹 Convert current unit → base (feet)
-    public double convertToBaseUnit(double value) {
-        return value * toFeetFactor;
+    @Override
+    public double toBase(double value) {
+        return value * conversionFactor;
     }
 
-    // 🔹 Convert base (feet) → current unit
-    public double convertFromBaseUnit(double baseValue) {
-        return baseValue / toFeetFactor;
+    @Override
+    public double fromBase(double value) {
+        return value / conversionFactor;
     }
 }
