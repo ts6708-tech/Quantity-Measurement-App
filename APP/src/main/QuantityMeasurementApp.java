@@ -4,22 +4,19 @@ public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        // ===== LENGTH (UC8 check) =====
-        QuantityLength l1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength l2 = new QuantityLength(12.0, LengthUnit.INCHES);
-        System.out.println(l1.add(l2, LengthUnit.FEET));
+        // ✅ LENGTH
+        Quantity<LengthUnit> l1 = new Quantity<>(1, LengthUnit.METER);
+        Quantity<LengthUnit> l2 = new Quantity<>(1, LengthUnit.FEET);
 
-        // ===== WEIGHT (UC9) =====
-        QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
+        System.out.println("Length Compare: " + l1.compare(l2));
+        System.out.println("Length Add (same unit): " + l1.add(l2));
+        System.out.println("Length Add (in FEET): " + l1.add(l2, LengthUnit.FEET));
 
-        System.out.println(w1.equals(w2)); // true
-        System.out.println(w1.add(w2)); // 2 KG
-        System.out.println(w1.add(w2, WeightUnit.GRAM)); // 2000 GRAM
+        // ✅ WEIGHT
+        Quantity<WeightUnit> w1 = new Quantity<>(1, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> w2 = new Quantity<>(1000, WeightUnit.GRAM);
 
-        System.out.println(
-                new QuantityWeight(2.0, WeightUnit.POUND)
-                        .convertTo(WeightUnit.KILOGRAM)
-        );
+        System.out.println("Weight Compare: " + w1.compare(w2));
+        System.out.println("Weight Add: " + w1.add(w2));
     }
 }
