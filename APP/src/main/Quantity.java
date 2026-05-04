@@ -1,14 +1,15 @@
 package main;
 
+import java.util.Objects;
+
 public class Quantity<U extends IMeasurable> {
 
     private final double value;
     private final U unit;
+    private static final double EPSILON = 0.0001;
 
     public Quantity(double value, U unit) {
-        if (unit == null) {
-            throw new IllegalArgumentException("Unit cannot be null");
-        }
+        if (unit == null) throw new IllegalArgumentException("Unit cannot be null");
         this.value = value;
         this.unit = unit;
     }
@@ -21,42 +22,82 @@ public class Quantity<U extends IMeasurable> {
         return unit;
     }
 
-    // Convert to base unit
-    public double toBase() {
-        return unit.toBase(value);
+    private double toBase() {
+        return unit.convertToBaseUnit(value);
     }
 
-    // ✅ FIXED: epsilon-based comparison
-    public boolean compare(Quantity<U> other) {
-        if (other == null) return false;
-
-        double epsilon = 0.0001;
-        return Math.abs(this.toBase() - other.toBase()) < epsilon;
+    private double round(double val) {
+        return Math.round(val * 100.0) / 100.0;
     }
 
-    // Add and return in same unit
-    public Quantity<U> add(Quantity<U> other) {
-        double sumBase = this.toBase() + other.toBase();
-        double finalValue = unit.fromBase(sumBase);
-        return new Quantity<>(finalValue, this.unit);
+    private void validate(Quantity<U> other) {
+        if (other == null) throw new IllegalArgumentException("Null quantity");
+        if (!unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Different measurement types");
     }
 
-    // Add and return in target unit
-    public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        double sumBase = this.toBase() + other.toBase();
-        double finalValue = targetUnit.fromBase(sumBase);
-        return new Quantity<>(finalValue, targetUnit);
-    }
+    // ✅ EQUALS
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Quantity<?> other)) return false;
 
-    // ✅ UC11 REQUIRED: conversion method
-    public Quantity<U> convertTo(U targetUnit) {
-        double base = this.toBase();
-        double converted = targetUnit.fromBase(base);
-        return new Quantity<>(converted, targetUnit);
+        if (!unit.getClass().equals(other.unit.getClass())) return false;
+
+        double base1 = this.toBase();
+        double base2 = ((Quantity<?>) obj).unit.convertToBaseUnit(((Quantity<?>) obj).value);
+
+        return Math.abs(base1 - base2) < EPSILON;
     }
 
     @Override
-    public String toString() {
-        return value + " " + unit;
+    public int hashCode() {
+        return Objects.hash(round(toBase()));
+    }
+
+    // ✅ CONVERSION
+    public Quantity<U> convertTo(U targetUnit) {
+        double base = toBase();
+        double converted = targetUnit.convertFromBaseUnit(base);
+        return new Quantity<>(round(converted), targetUnit);
+    }
+
+    // ✅ ADD
+    public Quantity<U> add(Quantity<U> other) {
+        return add(other, unit);
+    }
+
+    public Quantity<U> add(Quantity<U> other, U targetUnit) {
+        validate(other);
+
+        double result = this.toBase() + other.toBase();
+        double converted = targetUnit.convertFromBaseUnit(result);
+
+        return new Quantity<>(round(converted), targetUnit);
+    }
+
+    // ✅ SUBTRACT (UC12)
+    public Quantity<U> subtract(Quantity<U> other) {
+        return subtract(other, unit);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        validate(other);
+
+        double result = this.toBase() - other.toBase();
+        double converted = targetUnit.convertFromBaseUnit(result);
+
+        return new Quantity<>(round(converted), targetUnit);
+    }
+
+    // ✅ DIVIDE (UC12)
+    public double divide(Quantity<U> other) {
+        validate(other);
+
+        double divisor = other.toBase();
+        if (Math.abs(divisor) < EPSILON)
+            throw new ArithmeticException("Division by zero");
+
+        return this.toBase() / divisor;
     }
 }
