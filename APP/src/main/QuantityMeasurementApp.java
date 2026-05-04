@@ -4,29 +4,22 @@ public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        // 🔹 Conversion
-        QuantityLength length1 = new QuantityLength(1.0, LengthUnit.FEET);
-        System.out.println("Convert 1 FEET to INCHES: " + length1.convertTo(LengthUnit.INCHES));
-
-        // 🔹 Equality
+        // ===== LENGTH (UC8 check) =====
         QuantityLength l1 = new QuantityLength(1.0, LengthUnit.FEET);
         QuantityLength l2 = new QuantityLength(12.0, LengthUnit.INCHES);
-        System.out.println("1 FEET == 12 INCHES ? " + l1.equals(l2));
+        System.out.println(l1.add(l2, LengthUnit.FEET));
 
-        // 🔹 Addition (same unit result)
-        QuantityLength result1 = l1.add(l2, LengthUnit.FEET);
-        System.out.println("1 FEET + 12 INCHES (in FEET): " + result1);
+        // ===== WEIGHT (UC9) =====
+        QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
 
-        // 🔹 Addition (different target unit)
-        QuantityLength result2 = l1.add(l2, LengthUnit.YARDS);
-        System.out.println("1 FEET + 12 INCHES (in YARDS): " + result2);
+        System.out.println(w1.equals(w2)); // true
+        System.out.println(w1.add(w2)); // 2 KG
+        System.out.println(w1.add(w2, WeightUnit.GRAM)); // 2000 GRAM
 
-        // 🔹 Direct static conversion
-        double converted = QuantityLength.convert(1.0, LengthUnit.YARDS, LengthUnit.FEET);
-        System.out.println("1 YARD in FEET: " + converted);
-
-        // 🔹 Extra check (cm)
-        QuantityLength cm = new QuantityLength(2.54, LengthUnit.CENTIMETERS);
-        System.out.println("2.54 CM in INCHES: " + cm.convertTo(LengthUnit.INCHES));
+        System.out.println(
+                new QuantityWeight(2.0, WeightUnit.POUND)
+                        .convertTo(WeightUnit.KILOGRAM)
+        );
     }
 }
